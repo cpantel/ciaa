@@ -12,23 +12,50 @@ def showLinks(title,links):
       print title
       for link in sorted(set(links)):
          repetitions = str(links.count(link))
-         print repetitions + "   " + link
+	 print repetitions + '       ' + link
       print 
 
 def checkLinks(title,links):
-    if (links):
+   if (links):
       print title
       for link in sorted(set(links)):
-         repetitions = str(links.count(link))
-         page = urllib.urlopen(link)
-         text = page.read()
-         page.close()
-         if (re.search('Este tema no existe',text)):
-            status = ' FAIL '
-         else:
-            status = ' OK   '     
-         print repetitions + status + link
-      print
+         try:
+            repetitions = str(links.count(link))
+            code,text = readPage(link)
+            if (code == 200):
+               if (re.search('Este tema no existe',text)):
+                  status = ' FAIL  '
+               else:
+                  status = ' OK    '     
+            else:
+               status = ' ' + str(code)  + '   '
+            print repetitions + status + link
+         except IOError:
+            print 'No se puedo verificar ' + link
+
+def readPage(url):
+   page = urllib.urlopen(url)
+   text = page.read()
+   code = page.getcode()
+   page.close()
+   return (code,text)
+
+def isCiaaInternal(link):
+   return ('http://proyecto-ciaa.com.ar' == link[0:27] or
+           'http://www.proyecto-ciaa.com.ar' == link[0:31] )
+
+def isCiaaExternal(link):
+   return (re.search('ciaa',link, re.IGNORECASE) )
+
+def isMail(link):
+   return ('mailto' == link[0:6])
+
+def isHttp(link):
+   return ('http' == link[0:4])
+
+def cleanLink(url,link):
+   link = str(urlparse.urljoin(url, link))
+   return re.sub('&.*$', '', link)
 
 def processLandingPage(url):
    internalLinks = []
@@ -36,34 +63,33 @@ def processLandingPage(url):
    othersLinks = []
    mailLinks = []
    unknownLinks = []
+   try:
+      code,text = readPage(url)
+      soup = BeautifulSoup(text)
 
-   page = urllib.urlopen(url)
-   text = page.read()
-   page.close()
-
-   soup = BeautifulSoup(text)
-
-   for tag in soup.findAll('a', href=True):
-      tag['href'] = str(urlparse.urljoin(url, tag['href']))
-      if ('http' == tag['href'][0:4]):
-         if ('http://proyecto-ciaa.com.ar' == tag['href'][0:27] or 
-             'http://www.proyecto-ciaa.com.ar' == tag['href'][0:31] ):
-            internalLinks.append(tag['href'])
-         else:
-            if (re.search('ciaa',tag['href'], re.IGNORECASE)):
-               externalLinks.append(tag['href'])
+      for tag in soup.findAll('a', href=True):
+         link = cleanLink(url, tag['href'])
+         if (isHttp(link)):
+            if ( isCiaaInternal(link)):
+               internalLinks.append(link)
             else:
-               othersLinks.append(tag['href'])
-      elif ('mailto' == tag['href'][0:6]):
-         mailLinks.append(tag['href'])
-      else:
-         unknownLinks.append(tag['href'])
+               if (isCiaaExternal(link)):
+                  externalLinks.append(link)
+               else:
+                  othersLinks.append(link)
+         elif (isMail(link)):
+            mailLinks.append(link)
+         else:
+            unknownLinks.append(link)
 
-   showLinks("Links desconocidos", unknownLinks)
-   showLinks("Direcciones de email", mailLinks)
-   showLinks("Links a otros", othersLinks)
-   showLinks("Links externos", externalLinks)
-   checkLinks("Links internos", internalLinks)
+      showLinks("Links desconocidos", unknownLinks)
+      showLinks("Direcciones de email", mailLinks)
+      showLinks("Links a otros", othersLinks)
+      showLinks("Links externos", externalLinks)
+      checkLinks("Links internos", internalLinks)
+   except IOError:
+      print 'No se puedo abrir ' + url
+
 
 def main():
    if len(sys.argv) == 1:
