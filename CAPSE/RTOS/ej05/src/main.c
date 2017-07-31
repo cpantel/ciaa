@@ -23,12 +23,11 @@
 
 
 int main(void){
-
    /* ------------- INICIALIZACIONES ------------- */
 
    boardConfig();
 
-//   uartConfig( UART_USB, 115200 );
+   uartConfig( UART_USB, 115200 );
 
    delay_t delay;
 
@@ -40,16 +39,21 @@ int main(void){
    uint32_t myTime = 0;
    uint8_t led = false; // POC  
 
+   uartWriteString(UART_USB, "init\n");
+
    while(1) {
 
     if (delayRead(&delay)) {
       if (myTime == next) {
-        //send message
+        uartWriteString(UART_USB, "msg\n");
+
         gpioWrite(LED1, led); // POC
         led = ! led;          // POC
         next += DELAY_INCREMENT;
+        myTime = 0;
+      } else {
+        ++myTime;
       }
-      ++myTime;
     }      
 
 
