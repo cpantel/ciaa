@@ -7,31 +7,38 @@
 
 /*==================[macros and definitions]=================================*/
 
-#define TICK_AMPLITUDE 500
+#define TICK_AMPLITUDE 1000
 
 /*==================[internal data declaration]==============================*/
 
 /*==================[internal functions declaration]=========================*/
 
+void task1init();
+void task2init();
+void task3init();
+
+void task1run();
+void task2run();
+void task3run();
+
 /*==================[internal data definition]===============================*/
 
-uint8_t task1run = false;
-uint8_t task2run = false;
-uint8_t task3run = false;
+struct task_t {
+  uint8_t enabled;
+  uint8_t period;
+  uint8_t led;
+  void (*init)(void);
+  void (*run)(void);
+};
 
-uint8_t task1period = 4;
-uint8_t task2period = 2;
-uint8_t task3period = 1;
+struct task_t task[3] = {
+  {false, 1, false, &task1init, &task1run},
+  {false, 2, false, &task2init, &task2run},
+  {false, 3, false, &task3init, &task3run}
+};
 
 
-uint32_t task1counter = 0;
-uint32_t task2counter = 0;
-uint32_t task3counter = 0;
-
-uint8_t led1 = false;
-uint8_t led2 = false;
-uint8_t led3 = false;
-
+uint32_t tickCount = 0;
 
 /*==================[external data definition]===============================*/
 
@@ -39,7 +46,6 @@ uint8_t led3 = false;
 void task1init() {
    gpioConfig(LED1, GPIO_OUTPUT);
 }
-
 
 void task2init() {
   gpioConfig(LED2, GPIO_OUTPUT);
@@ -50,59 +56,37 @@ void task3init() {
 
 }
 
-void task1() {
-  led1 = !led1;
-  gpioWrite(LED1, led1);
+void task1run() {
+  task[0].led = !task[0].led;
+  gpioWrite(LED1, task[0].led);
 
 }
 
-void task2() {
-  led2 = !led2;
-  gpioWrite(LED2, led2);
+void task2run() {
+  task[1].led = !task[1].led;
+  gpioWrite(LED2, task[1].led);
 }
 
 
-void task3() {
-  led3 = !led3;
-  gpioWrite(LED3, led3);
+void task3run() {
+  task[2].led = !task[2].led;
+  gpioWrite(LED3, task[2].led);
 }
-
 
 
 void scheduler() {
-   ++task1counter;
-   if (task1counter == task1period) {
-      task1run = true;
-      task1counter = 0;
-   } else {
-      task1run = false;
+   uint8_t idx;
+   for (idx = 0; idx < 3 ; ++idx) {
+      task[idx].enabled = ( ( tickCount % task[idx].period ) == 0 );
    }
-   ++task2counter;
-   if (task2counter == task2period) {
-      task2run = true;
-      task2counter = 0;
-   } else {
-      task2run = false;
-   }
-   ++task3counter;
-   if (task3counter == task3period) {
-      task3run = true;
-      task3counter = 0;
-   } else {
-      task3run = false;
-  }
-
 }
 
 void dispatcher() {
-   if (task1run) {
-      task1();
-   }
-   if (task2run) {
-      task2();
-   }
-   if (task3run) {
-      task3();
+   uint8_t idx;
+   for (idx = 0; idx < 3 ; ++idx) {
+      if (task[idx].enabled) {
+         task[idx].run();
+      }
    }
 }
 
@@ -113,10 +97,10 @@ int main(void){
    /* ------------- INICIALIZACIONES ------------- */
 
    boardConfig();
-   
-   task1init();
-   task2init();
-   task3init();
+   uint8_t idx;
+   for (idx=0; idx< 3; ++idx) { 
+     task[idx].run();
+   }   
 
    delay_t delay;
 
@@ -127,6 +111,7 @@ int main(void){
     if (delayRead(&delay)) {
       scheduler();
       dispatcher();
+      ++tickCount;      
     }
 
 

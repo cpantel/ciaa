@@ -23,15 +23,12 @@ uint8_t task1period = 4;
 uint8_t task2period = 2;
 uint8_t task3period = 1;
 
-
-uint32_t task1counter = 0;
-uint32_t task2counter = 0;
-uint32_t task3counter = 0;
-
 uint8_t led1 = false;
 uint8_t led2 = false;
 uint8_t led3 = false;
 
+
+uint32_t tickCount = 0;
 
 /*==================[external data definition]===============================*/
 
@@ -70,28 +67,9 @@ void task3() {
 
 
 void scheduler() {
-   ++task1counter;
-   if (task1counter == task1period) {
-      task1run = true;
-      task1counter = 0;
-   } else {
-      task1run = false;
-   }
-   ++task2counter;
-   if (task2counter == task2period) {
-      task2run = true;
-      task2counter = 0;
-   } else {
-      task2run = false;
-   }
-   ++task3counter;
-   if (task3counter == task3period) {
-      task3run = true;
-      task3counter = 0;
-   } else {
-      task3run = false;
-  }
-
+   task1run = ( ( tickCount % task1period ) == 0 );
+   task2run = ( ( tickCount % task2period ) == 0 );
+   task3run = ( ( tickCount % task3period ) == 0 );
 }
 
 void dispatcher() {
@@ -127,6 +105,7 @@ int main(void){
     if (delayRead(&delay)) {
       scheduler();
       dispatcher();
+      ++tickCount;      
     }
 
 

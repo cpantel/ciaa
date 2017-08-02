@@ -27,14 +27,15 @@ struct task_t {
   uint8_t enabled;
   uint8_t period;
   uint8_t led;
+  uint32_t counter;
   void (*init)(void);
   void (*run)(void);
 };
 
 struct task_t task[3] = {
-  {false, 1, false, &task1init, &task1run},
-  {false, 2, false, &task2init, &task2run},
-  {false, 3, false, &task3init, &task3run}
+  {false, 1, false, 0, &task1init, &task1run},
+  {false, 2, false, 0, &task2init, &task2run},
+  {false, 3, false, 0, &task3init, &task3run}
 };
 
 
@@ -77,7 +78,13 @@ void task3run() {
 void scheduler() {
    uint8_t idx;
    for (idx = 0; idx < 3 ; ++idx) {
-      task[idx].enabled = ( ( tickCount % task[idx].period ) == 0 );
+      ++task[idx].counter;
+      if (task[idx].counter == task[idx].period ) {
+         task[idx].enabled = true;
+         task[idx].counter == 0;
+      } else {
+         task[idx].enabled = false;
+      }     
    }
 }
 
