@@ -83,18 +83,14 @@
 #define BlinkLed1 0
 /** \brief Task Definition */
 #define ReadTec1 1
-/** \brief Task Definition */
-#define ShowElapsedTime 2
 
 /** \brief Definition of the Application Mode AppMode1 */
 #define AppMode1 0
 
 
 
-/** \brief Definition of the Alarm ActivateBlinkLed1 */
-#define ActivateBlinkLed1 0
 /** \brief Definition of the Alarm ActivateReadTec1 */
-#define ActivateReadTec1 1
+#define ActivateReadTec1 0
 
 /** \brief Definition of the Counter HardwareCounter */
 #define HardwareCounter 0
@@ -190,8 +186,6 @@ extern void ErrorHook(void);
 DeclareTask(BlinkLed1);
 /** \brief Task Declaration of Task ReadTec1 */
 DeclareTask(ReadTec1);
-/** \brief Task Declaration of Task ShowElapsedTime */
-DeclareTask(ShowElapsedTime);
 
 
 

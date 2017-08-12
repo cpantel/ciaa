@@ -89,28 +89,16 @@ uint8 StackTaskReadTec1[512 + TASK_STACK_ADDITIONAL_SIZE];
 #else
 uint8 StackTaskReadTec1[512];
 #endif
-/** \brief ShowElapsedTime stack */
-#if ( x86 == ARCH )
-uint8 StackTaskShowElapsedTime[512 + TASK_STACK_ADDITIONAL_SIZE];
-#else
-uint8 StackTaskShowElapsedTime[512];
-#endif
 
 /** \brief BlinkLed1 context */
 TaskContextType ContextTaskBlinkLed1;
 /** \brief ReadTec1 context */
 TaskContextType ContextTaskReadTec1;
-/** \brief ShowElapsedTime context */
-TaskContextType ContextTaskShowElapsedTime;
-
-/** \brief Ready List for Priority 1 */
-TaskType ReadyList1[1];
 
 /** \brief Ready List for Priority 0 */
 TaskType ReadyList0[2];
 
-const AlarmType OSEK_ALARMLIST_HardwareCounter[2] = {
-   ActivateBlinkLed1, /* this alarm has to be incremented with this counter */
+const AlarmType OSEK_ALARMLIST_HardwareCounter[1] = {
    ActivateReadTec1, /* this alarm has to be incremented with this counter */
 };
 
@@ -122,7 +110,6 @@ const AlarmType OSEK_ALARMLIST_HardwareCounter[2] = {
  * priorities and the OpenOSE priorities:
  *
  * User P.         Osek P.
- * 3               1
  * 2               0
  */
 
@@ -160,23 +147,6 @@ const TaskConstType TasksConst[TASKS_COUNT] = {
       0 , /* events mask */
       0 ,/* resources mask */
       0 /* core */
-   },
-   /* Task ShowElapsedTime */
-   {
-       OSEK_TASK_ShowElapsedTime,   /* task entry point */
-       &ContextTaskShowElapsedTime, /* pointer to task context */
-       StackTaskShowElapsedTime, /* pointer stack memory */
-       sizeof(StackTaskShowElapsedTime), /* stack size */
-       1, /* task priority */
-       1, /* task max activations */
-       {
-         0, /* basic task */
-         0, /* non preemtive task */
-         0
-      }, /* task const flags */
-      0 , /* events mask */
-      0 ,/* resources mask */
-      0 /* core */
    }
 };
 
@@ -195,11 +165,7 @@ const AutoStartType AutoStart[1]  = {
    }
 };
 
-const ReadyConstType ReadyConst[2] = { 
-   {
-      1, /* Length of this ready list */
-      ReadyList1 /* Pointer to the Ready List */
-   },
+const ReadyConstType ReadyConst[1] = { 
    {
       2, /* Length of this ready list */
       ReadyList0 /* Pointer to the Ready List */
@@ -207,28 +173,18 @@ const ReadyConstType ReadyConst[2] = {
 };
 
 /** TODO replace next line with: 
- ** ReadyVarType ReadyVar[2] ; */
-ReadyVarType ReadyVar[2];
+ ** ReadyVarType ReadyVar[1] ; */
+ReadyVarType ReadyVar[1];
 
 /** \brief Resources Priorities */
 const TaskPriorityType ResourcesPriority[0]  = {
 
 };
 /** TODO replace next line with: 
- ** AlarmVarType AlarmsVar[2]; */
-AlarmVarType AlarmsVar[2];
+ ** AlarmVarType AlarmsVar[1]; */
+AlarmVarType AlarmsVar[1];
 
-const AlarmConstType AlarmsConst[2]  = {
-   {
-      OSEK_COUNTER_HardwareCounter, /* Counter */
-      ACTIVATETASK, /* Alarm action */
-      {
-         NULL, /* no callback */
-         BlinkLed1, /* TaskID */
-         0, /* no event */
-         0 /* no counter */
-      },
-   },
+const AlarmConstType AlarmsConst[1]  = {
    {
       OSEK_COUNTER_HardwareCounter, /* Counter */
       ACTIVATETASK, /* Alarm action */
@@ -244,12 +200,6 @@ const AlarmConstType AlarmsConst[2]  = {
 const AutoStartAlarmType AutoStartAlarm[ALARM_AUTOSTART_COUNT] = {
   {
       AppMode1, /* Application Mode */
-      ActivateBlinkLed1, /* Alarms */
-      0, /* Alarm Time */
-      200 /* Alarm Time */
-   },
-  {
-      AppMode1, /* Application Mode */
       ActivateReadTec1, /* Alarms */
       0, /* Alarm Time */
       50 /* Alarm Time */
@@ -260,7 +210,7 @@ CounterVarType CountersVar[1];
 
 const CounterConstType CountersConst[1] = {
    {
-      2, /* quantity of alarms for this counter */
+      1, /* quantity of alarms for this counter */
       (AlarmType*)OSEK_ALARMLIST_HardwareCounter, /* alarms list */
       1000, /* max allowed value */
       1, /* min cycle */

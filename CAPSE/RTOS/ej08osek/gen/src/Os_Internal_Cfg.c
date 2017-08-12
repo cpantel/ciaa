@@ -246,7 +246,7 @@ const AutoStartAlarmType AutoStartAlarm[ALARM_AUTOSTART_COUNT] = {
       AppMode1, /* Application Mode */
       ActivateBlinkLed1, /* Alarms */
       0, /* Alarm Time */
-      200 /* Alarm Time */
+      1000 /* Alarm Time */
    },
   {
       AppMode1, /* Application Mode */
