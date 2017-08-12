@@ -107,13 +107,19 @@ TASK(StackProfile) {
 //      uartWriteByte(UART_USB, 10);
 
       char uartBuffer[20];
-      uartWriteString( UART_USB, "   size: " );
+      uartWriteString( UART_USB, " size: " );
       itoa( (int) (TasksConst[idx].StackSize), (char*)uartBuffer, 10 );
       uartWriteString( UART_USB, uartBuffer );
 //      uartWriteByte( UART_USB, 10);
 
-      uartWriteString( UART_USB, "   base: " );
+      uartWriteString( UART_USB, " base: " );
       itoa( (int) (TasksConst[idx].StackPtr), (char*)uartBuffer, 16 );
+      uartWriteString( UART_USB, uartBuffer );
+
+//      uartWriteByte( UART_USB, 10);
+
+      uartWriteString( UART_USB, " ?: " );
+      itoa( (int) ( * (TasksConst[idx].TaskContext) ), (char*)uartBuffer, 16 );
       uartWriteString( UART_USB, uartBuffer );
 
 

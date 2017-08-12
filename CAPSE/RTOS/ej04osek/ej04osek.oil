@@ -13,10 +13,10 @@ OSEK OSEK {
 
    APPMODE = AppMode1;
 
-   TASK BlinkLed1 {
+   TASK BlinkLed3 {
       PRIORITY = 2;
       ACTIVATION = 1;
-      STACK = 512;
+      STACK = 128;
       TYPE = BASIC;
       SCHEDULE = NON;
    }
@@ -24,11 +24,39 @@ OSEK OSEK {
    TASK ReadTec1 {
       PRIORITY = 2;
       ACTIVATION = 1;
-      STACK = 512;
+      STACK = 256;
       TYPE = BASIC;
       SCHEDULE = NON;
    }
   
+   TASK TickCounter {
+      PRIORITY = 1;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = BASIC;
+      SCHEDULE = NON;
+   }
+
+   TASK FollowTec1 {
+      PRIORITY = 2;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = BASIC;
+      SCHEDULE = NON;
+   }
+
+   ALARM ActivateBlinkLed3 {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = BlinkLed3;
+      }
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+         ALARMTIME = 0;
+         CYCLETIME = 1000;
+      }
+   }
+
    ALARM ActivateReadTec1 {
       COUNTER = HardwareCounter;
       ACTION = ACTIVATETASK {
@@ -38,6 +66,25 @@ OSEK OSEK {
       	APPMODE = AppMode1;
       	ALARMTIME = 0;
       	CYCLETIME = 50;
+      }
+   }
+
+   ALARM ActivateTickCounter {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK TickCounter;
+      }
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+         ALARMTIME = 0;
+         CYCLETIME = 1;
+      }
+   }
+
+   ALARM ActivateShowElapsedTime {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = ShowElapsedTime;
       }
    }
 

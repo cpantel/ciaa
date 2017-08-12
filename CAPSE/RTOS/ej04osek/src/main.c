@@ -27,16 +27,13 @@ void BlinkLed1Init() {
    gpioConfig(LED3, GPIO_OUTPUT); 
 }
 
+void ShowElapsedTimeInit() {
+   gpioConfig(LED1, GPIO_OUTPUT); 
+   elapsedTime = 0;
+}
 /*==================[declaraciones de funciones externas]====================*/
 
 /*==================[funcion principal]======================================*/
-
-// FUNCION PRINCIPAL, PUNTO DE ENTRADA AL PROGRAMA LUEGO DE ENCENDIDO O RESET.
-int main( void )
-{
-   StartOS(AppMode1);
-   return 0;
-}
 
 void StartupHook(void) {
    boardConfig();   
@@ -52,6 +49,24 @@ void ErrorHook(void)
 
 TASK(BlinkLed3) {
    gpioToogle(LED3);
+   TerminateTask();
+}
+
+TASK(TickCounter) {
+   ++tickCount; 
+   TerminateTask();
+}
+
+TASK(ShowElapsedTime) {
+   if (tickCount) {
+      --tickCount;
+   } else {
+     CancelAlarm(ActivateShowElapsedTime);
+     SetRelAlarm(ActivateReadTec1,0,50);
+     SetRelAlarm(ActivateTickCounter,0,1);
+   }
+
+   TerminateTask();
 }
 
 TASK(ReadTec1)
@@ -63,7 +78,6 @@ TASK(ReadTec1)
    switch ( state ) {
       case DOWN: {
          if (pressed) {
-            counter+=50;
          } else {
             state = RISING;
          }
@@ -75,14 +89,15 @@ TASK(ReadTec1)
          } else {
             state = UP;
             counter = 0;
-            // ActivateTask(ShowElapsedTime);
+            CancelAlarm(ActivateTickCounter);
+            CancelAlarm(ActivateReadTec1);
+            SetRelAlarm(ActivateShowElapsedTime,0,50);
          }
          break;
       }
       case UP: {
          if (pressed) {
             state = FALLING;
-            
          } else {
          }
          break;
@@ -98,6 +113,14 @@ TASK(ReadTec1)
    }      
    TerminateTask();
 }
+
+// FUNCION PRINCIPAL, PUNTO DE ENTRADA AL PROGRAMA LUEGO DE ENCENDIDO O RESET.
+int main( void )
+{
+   StartOS(AppMode1);
+   return 0;
+}
+
 
 /*==================[definiciones de funciones internas]=====================*/
 
