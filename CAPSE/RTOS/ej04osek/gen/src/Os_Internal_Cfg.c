@@ -79,9 +79,9 @@
 /*==================[internal data definition]===============================*/
 /** \brief BlinkLed3 stack */
 #if ( x86 == ARCH )
-uint8 StackTaskBlinkLed3[128 + TASK_STACK_ADDITIONAL_SIZE];
+uint8 StackTaskBlinkLed3[256 + TASK_STACK_ADDITIONAL_SIZE];
 #else
-uint8 StackTaskBlinkLed3[128];
+uint8 StackTaskBlinkLed3[256];
 #endif
 /** \brief ReadTec1 stack */
 #if ( x86 == ARCH )
@@ -95,11 +95,11 @@ uint8 StackTaskTickCounter[512 + TASK_STACK_ADDITIONAL_SIZE];
 #else
 uint8 StackTaskTickCounter[512];
 #endif
-/** \brief FollowTec1 stack */
+/** \brief ShowElapsedTime stack */
 #if ( x86 == ARCH )
-uint8 StackTaskFollowTec1[512 + TASK_STACK_ADDITIONAL_SIZE];
+uint8 StackTaskShowElapsedTime[512 + TASK_STACK_ADDITIONAL_SIZE];
 #else
-uint8 StackTaskFollowTec1[512];
+uint8 StackTaskShowElapsedTime[512];
 #endif
 
 /** \brief BlinkLed3 context */
@@ -108,8 +108,8 @@ TaskContextType ContextTaskBlinkLed3;
 TaskContextType ContextTaskReadTec1;
 /** \brief TickCounter context */
 TaskContextType ContextTaskTickCounter;
-/** \brief FollowTec1 context */
-TaskContextType ContextTaskFollowTec1;
+/** \brief ShowElapsedTime context */
+TaskContextType ContextTaskShowElapsedTime;
 
 /** \brief Ready List for Priority 1 */
 TaskType ReadyList1[3];
@@ -188,12 +188,12 @@ const TaskConstType TasksConst[TASKS_COUNT] = {
       0 ,/* resources mask */
       0 /* core */
    },
-   /* Task FollowTec1 */
+   /* Task ShowElapsedTime */
    {
-       OSEK_TASK_FollowTec1,   /* task entry point */
-       &ContextTaskFollowTec1, /* pointer to task context */
-       StackTaskFollowTec1, /* pointer stack memory */
-       sizeof(StackTaskFollowTec1), /* stack size */
+       OSEK_TASK_ShowElapsedTime,   /* task entry point */
+       &ContextTaskShowElapsedTime, /* pointer to task context */
+       StackTaskShowElapsedTime, /* pointer stack memory */
+       sizeof(StackTaskShowElapsedTime), /* stack size */
        1, /* task priority */
        1, /* task max activations */
        {
@@ -300,12 +300,6 @@ const AutoStartAlarmType AutoStartAlarm[ALARM_AUTOSTART_COUNT] = {
       ActivateReadTec1, /* Alarms */
       0, /* Alarm Time */
       50 /* Alarm Time */
-   },
-  {
-      AppMode1, /* Application Mode */
-      ActivateTickCounter, /* Alarms */
-      0, /* Alarm Time */
-      1 /* Alarm Time */
    }
 };
 

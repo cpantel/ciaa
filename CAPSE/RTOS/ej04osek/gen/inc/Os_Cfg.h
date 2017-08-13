@@ -86,7 +86,7 @@
 /** \brief Task Definition */
 #define TickCounter 2
 /** \brief Task Definition */
-#define FollowTec1 3
+#define ShowElapsedTime 3
 
 /** \brief Definition of the Application Mode AppMode1 */
 #define AppMode1 0
@@ -198,8 +198,8 @@ DeclareTask(BlinkLed3);
 DeclareTask(ReadTec1);
 /** \brief Task Declaration of Task TickCounter */
 DeclareTask(TickCounter);
-/** \brief Task Declaration of Task FollowTec1 */
-DeclareTask(FollowTec1);
+/** \brief Task Declaration of Task ShowElapsedTime */
+DeclareTask(ShowElapsedTime);
 
 
 

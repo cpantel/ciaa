@@ -118,7 +118,7 @@
       ErrorHookRunning = (uint8)0U;   \
    }
 
-#define ALARM_AUTOSTART_COUNT 3
+#define ALARM_AUTOSTART_COUNT 2
 
 #define OSEK_COUNTER_HardwareCounter 0
 /** \brief ALARMS_COUNT define */

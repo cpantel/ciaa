@@ -23,13 +23,12 @@ void ReadTec1Init() {
    gpioConfig(TEC1, GPIO_INPUT); 
 }
 
-void BlinkLed1Init() {
+void BlinkLed3Init() {
    gpioConfig(LED3, GPIO_OUTPUT); 
 }
 
 void ShowElapsedTimeInit() {
    gpioConfig(LED1, GPIO_OUTPUT); 
-   elapsedTime = 0;
 }
 /*==================[declaraciones de funciones externas]====================*/
 
@@ -38,17 +37,17 @@ void ShowElapsedTimeInit() {
 void StartupHook(void) {
    boardConfig();   
    ReadTec1Init();
-   BlinkLed1Init();
+   BlinkLed3Init();
    ShowElapsedTimeInit();
 } 
 
 void ErrorHook(void)
 {
-	ShutdownOS(0);
+   ShutdownOS(0);
 }
 
 TASK(BlinkLed3) {
-   gpioToogle(LED3);
+   gpioToggle(LED3);
    TerminateTask();
 }
 
@@ -62,8 +61,7 @@ TASK(ShowElapsedTime) {
       --tickCount;
    } else {
      CancelAlarm(ActivateShowElapsedTime);
-     SetRelAlarm(ActivateReadTec1,0,50);
-     SetRelAlarm(ActivateTickCounter,0,1);
+//     SetRelAlarm(ActivateReadTec1,0,50);
    }
 
    TerminateTask();
@@ -72,7 +70,6 @@ TASK(ShowElapsedTime) {
 TASK(ReadTec1)
 {
    static STATES state = UP;
-   static int32_t counter = 0;
 
    int pressed = ! gpioRead(TEC1);
    switch ( state ) {
@@ -88,9 +85,8 @@ TASK(ReadTec1)
             state = DOWN;
          } else {
             state = UP;
-            counter = 0;
             CancelAlarm(ActivateTickCounter);
-            CancelAlarm(ActivateReadTec1);
+//            CancelAlarm(ActivateReadTec1);
             SetRelAlarm(ActivateShowElapsedTime,0,50);
          }
          break;
@@ -105,6 +101,7 @@ TASK(ReadTec1)
       case FALLING: {
          if (pressed ) {
             state = DOWN;
+            SetRelAlarm(ActivateTickCounter, 0, 50);
          } else {
             state = UP;
          }

@@ -16,7 +16,7 @@ OSEK OSEK {
    TASK BlinkLed3 {
       PRIORITY = 2;
       ACTIVATION = 1;
-      STACK = 128;
+      STACK = 256;
       TYPE = BASIC;
       SCHEDULE = NON;
    }
@@ -37,7 +37,7 @@ OSEK OSEK {
       SCHEDULE = NON;
    }
 
-   TASK FollowTec1 {
+   TASK ShowElapsedTime {
       PRIORITY = 2;
       ACTIVATION = 1;
       STACK = 512;
@@ -73,11 +73,6 @@ OSEK OSEK {
       COUNTER = HardwareCounter;
       ACTION = ACTIVATETASK {
          TASK TickCounter;
-      }
-      AUTOSTART = TRUE {
-         APPMODE = AppMode1;
-         ALARMTIME = 0;
-         CYCLETIME = 1;
       }
    }
 
