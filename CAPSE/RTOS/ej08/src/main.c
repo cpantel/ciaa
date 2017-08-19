@@ -10,7 +10,7 @@
 typedef enum { DOWN,RISING,UP,FALLING} STATES;
 
 #define TASK1INTERVAL 50
-#define TASK2INTERVAL 100
+#define TASK2INTERVAL 200
 
 
 /*==================[internal data declaration]==============================*/
@@ -89,7 +89,7 @@ void task1DebouncedRead() {
    static int32_t counter = 0;
    static uint32_t interval = 0;
    if (state == DOWN) {
-      ++counter;
+      counter += 100;
    }
 
    ++interval; 
@@ -104,7 +104,6 @@ void task1DebouncedRead() {
    switch ( state ) {
       case DOWN: {
          if (pressed) {
-       //     counter+=50;
          } else {
             state = RISING;
          }
