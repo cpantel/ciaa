@@ -1,0 +1,92 @@
+OSEK OSEK {
+
+   OS	ExampleOS {
+      STATUS = EXTENDED;
+      ERRORHOOK = TRUE;
+      PRETASKHOOK = FALSE;
+      POSTTASKHOOK = FALSE;
+      STARTUPHOOK = TRUE;
+      SHUTDOWNHOOK = FALSE;
+      USERESSCHEDULER = FALSE;
+      MEMMAP = FALSE;
+   };
+
+   APPMODE = AppMode1;
+
+   EVENT = Asterisk;
+   EVENT = Tec1;
+   EVENT = Tec2;
+   EVENT = Tec3;
+   EVENT = Tec4;
+ 
+   TASK Display {
+      PRIORITY = 1;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = EXTENDED;
+      SCHEDULE = NON;
+      EVENT = Asterisk;
+      AUTOSTART = TRUE;
+   }
+
+   TASK BlinkLed1 {
+      PRIORITY = 2;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = BASIC;
+      SCHEDULE = NON;
+   }
+
+   TASK ReadTec {
+      PRIORITY = 2;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = BASIC;
+      SCHEDULE = NON;
+   }
+
+   ALARM ActivateDisplay {
+      COUNTER = HardwareCounter;
+      ACTION = SETEVENT {
+         TASK = Display;
+         EVENT = Asterisk;
+      }
+      AUTOSTART = TRUE {
+      	APPMODE = AppMode1;
+      	ALARMTIME = 5000;
+      	CYCLETIME = 5000;
+      }
+   }
+
+   ALARM ActivateBlinkLed1 {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = BlinkLed1;
+      }
+      AUTOSTART = TRUE {
+        APPMODE = AppMode1;
+        ALARMTIME = 0;
+        CYCLETIME = 500;
+      }
+   }
+
+   ALARM ActivateReadTec {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = ReadTec;
+      }
+      AUTOSTART = TRUE {
+        APPMODE = AppMode1;
+        ALARMTIME = 0;
+        CYCLETIME = 50;
+      }
+   }
+   COUNTER HardwareCounter {
+      MAXALLOWEDVALUE = 10000;
+      TICKSPERBASE = 1;
+      MINCYCLE = 1;
+      TYPE = HARDWARE;
+      COUNTER = HWCOUNTER0;
+   };
+
+};
