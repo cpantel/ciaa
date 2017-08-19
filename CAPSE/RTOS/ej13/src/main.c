@@ -12,12 +12,18 @@
 /*==================[definiciones y macros]==================================*/
 typedef enum { DOWN,RISING,UP,FALLING} STATES;
 
+typedef struct {
+  STATES state;
+  uint8_t tec;
+  uint32_t evt;
+} TASKS;
+
 /*==================[definiciones de datos internos]=========================*/
 
 /*==================[definiciones de datos externos]=========================*/
 
 /*==================[declaraciones de funciones internas]====================*/
-void ReadTecInit() {
+void ReadEvtTecInit() {
    gpioConfig(TEC1, GPIO_INPUT);
    gpioConfig(TEC2, GPIO_INPUT);
    gpioConfig(TEC3, GPIO_INPUT);
@@ -37,22 +43,15 @@ void DisplayInit() {
 
 /*==================[funcion principal]======================================*/
 
-// FUNCION PRINCIPAL, PUNTO DE ENTRADA AL PROGRAMA LUEGO DE ENCENDIDO O RESET.
 int main( void )
 {
-   // ---------- CONFIGURACIONES ------------------------------
-   // Inicializar y configurar la plataforma
-  
    StartOS(AppMode1);
-   // NO DEBE LLEGAR NUNCA AQUI, debido a que a este programa se ejecuta 
-   // directamenteno sobre un microcontroladore y no es llamado por ningun
-   // Sistema Operativo, como en el caso de un programa para PC.
    return 0;
 }
 
 void StartupHook(void) {
    boardConfig();   
-   ReadTecInit();
+   ReadEvtTecInit();
    BlinkLed1Init();
    DisplayInit();
 } 
@@ -64,14 +63,38 @@ void ErrorHook(void)
 }
 
 TASK(Display) {
+
+   EventMaskType events;
+
    while (1) {
-     WaitEvent(Asterisk);
-     
+      WaitEvent( Asterisk  | EvtTec1  | EvtTec2  | EvtTec3 | EvtTec4 );
 
-     uartWriteByte( UART_USB, 42 );
+      GetEvent(Display, &events);
 
-     ClearEvent(Asterisk);
+      if ( events & Asterisk ) {
+         uartWriteByte( UART_USB, 42 );
+         ClearEvent(Asterisk);
+      }
+      if ( events & EvtTec1) {
+         uartWriteString( UART_USB, "\nEvtTec1\n"  );
+         ClearEvent(EvtTec1);
+      }
 
+      if ( events & EvtTec2) {
+         uartWriteString( UART_USB, "\nEvtTec2\n"  );
+         ClearEvent(EvtTec2);
+      }
+ 
+      if ( events & EvtTec3) {
+         uartWriteString( UART_USB, "\nEvtTec3\n"  );
+         ClearEvent(EvtTec3);
+      }
+ 
+      if ( events & EvtTec4) {
+         uartWriteString( UART_USB, "\nEvtTec4\n"  );
+         ClearEvent(EvtTec4);
+      }
+ 
    }
    TerminateTask();
 
@@ -85,41 +108,50 @@ TASK(BlinkLed1) {
 
 TASK(ReadTec)
 {
-   static STATES state = UP;
 
-   int pressed = ! gpioRead(TEC1);
-   switch ( state ) {
-      case DOWN: {
-         if (pressed) {
-         } else {
-            state = RISING;
-         }
-         break;
-      }
-      case RISING: {
-         if (pressed) {
-            state = DOWN;
-         } else {
-            state = UP;
-         }
-         break;
-      }
-      case UP: {
-         if (pressed) {
-            state = FALLING;
+   static TASKS task[4] = {
+      {UP,TEC1,EvtTec1},
+      {UP,TEC2,EvtTec2},
+      {UP,TEC3,EvtTec3},
+      {UP,TEC4,EvtTec4}
+   };
 
-         } else {
+   uint8_t idx;
+   for (idx = 0; idx < 4; ++idx) {
+
+      int pressed = ! gpioRead(task[idx].tec);
+      switch ( task[idx].state ) {
+         case DOWN: {
+            if (pressed) {
+            } else {
+               task[idx].state = RISING;
+            }
+            break;
          }
-         break;
-      }
-      case FALLING: {
-         if (pressed ) {
-            state = DOWN;
-            SetEvent(Display, Tec1);
-         } else {
-            state = UP;
+         case RISING: {
+            if (pressed) {
+               task[idx].state = DOWN;
+            } else {
+               task[idx].state = UP;
+            }
+            break;
          }
-         break;
+         case UP: {
+            if (pressed) {
+               task[idx].state = FALLING;
+            } else {
+            }
+            break;
+         }
+         case FALLING: {
+            if (pressed ) {
+               task[idx].state = DOWN;
+               SetEvent(Display, task[idx].evt);
+            } else {
+               task[idx].state = UP;
+            }
+            break;
+         }
       }
    }
    TerminateTask();
@@ -129,8 +161,5 @@ TASK(ReadTec)
 /*==================[definiciones de funciones internas]=====================*/
 
 /*==================[definiciones de funciones externas]=====================*/
-
-// Board_Init();
-// ciaaIOInit();
 
 /*==================[end of file]============================================*/

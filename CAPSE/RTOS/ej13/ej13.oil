@@ -14,10 +14,10 @@ OSEK OSEK {
    APPMODE = AppMode1;
 
    EVENT = Asterisk;
-   EVENT = Tec1;
-   EVENT = Tec2;
-   EVENT = Tec3;
-   EVENT = Tec4;
+   EVENT = EvtTec1;
+   EVENT = EvtTec2;
+   EVENT = EvtTec3;
+   EVENT = EvtTec4;
  
    TASK Display {
       PRIORITY = 1;
@@ -26,7 +26,12 @@ OSEK OSEK {
       TYPE = EXTENDED;
       SCHEDULE = NON;
       EVENT = Asterisk;
+      EVENT = EvtTec1;
+      EVENT = EvtTec2;
+      EVENT = EvtTec3;
+      EVENT = EvtTec4;
       AUTOSTART = TRUE;
+      APPMODE = AppMode1;
    }
 
    TASK BlinkLed1 {
@@ -53,7 +58,7 @@ OSEK OSEK {
       }
       AUTOSTART = TRUE {
       	APPMODE = AppMode1;
-      	ALARMTIME = 5000;
+      	ALARMTIME = 2000;
       	CYCLETIME = 5000;
       }
    }

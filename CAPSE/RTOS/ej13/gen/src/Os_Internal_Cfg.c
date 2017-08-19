@@ -141,7 +141,7 @@ const TaskConstType TasksConst[TASKS_COUNT] = {
          0, /* non preemtive task */
          0
       }, /* task const flags */
-      0 | Asterisk , /* events mask */
+      0 | Asterisk | EvtTec1 | EvtTec2 | EvtTec3 | EvtTec4 , /* events mask */
       0 ,/* resources mask */
       0 /* core */
    },
@@ -187,12 +187,16 @@ const TaskCoreType RemoteTasksCore[REMOTE_TASKS_COUNT] = {};
 /** \brief TaskVar Array */
 TaskVariableType TasksVar[TASKS_COUNT];
 
+/** \brief List of Auto Start Tasks in Application Mode AppMode1 */
+const TaskType TasksAppModeAppMode1[1]  = {
+   Display
+};
 /** \brief AutoStart Array */
 const AutoStartType AutoStart[1]  = {
    /* Application Mode AppMode1 */
    {
-      0, /* Total Auto Start Tasks in this Application Mode */
-      NULL /* no tasks on this mode */
+      1, /* Total Auto Start Tasks in this Application Mode */
+      (TaskRefType)TasksAppModeAppMode1 /* Pointer to the list of Auto Start Stacks on this Application Mode */
    }
 };
 
@@ -256,7 +260,7 @@ const AutoStartAlarmType AutoStartAlarm[ALARM_AUTOSTART_COUNT] = {
   {
       AppMode1, /* Application Mode */
       ActivateDisplay, /* Alarms */
-      5000, /* Alarm Time */
+      2000, /* Alarm Time */
       5000 /* Alarm Time */
    },
   {

@@ -91,14 +91,14 @@
 
 /** \brief Definition of the Event Asterisk */
 #define Asterisk 0x1U
-/** \brief Definition of the Event Tec1 */
-#define Tec1 0x2U
-/** \brief Definition of the Event Tec2 */
-#define Tec2 0x4U
-/** \brief Definition of the Event Tec3 */
-#define Tec3 0x8U
-/** \brief Definition of the Event Tec4 */
-#define Tec4 0x10U
+/** \brief Definition of the Event EvtTec1 */
+#define EvtTec1 0x2U
+/** \brief Definition of the Event EvtTec2 */
+#define EvtTec2 0x4U
+/** \brief Definition of the Event EvtTec3 */
+#define EvtTec3 0x8U
+/** \brief Definition of the Event EvtTec4 */
+#define EvtTec4 0x10U
 
 
 /** \brief Definition of the Alarm ActivateDisplay */
