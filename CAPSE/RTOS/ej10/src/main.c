@@ -10,20 +10,16 @@
 #include "os.h"       // <= freeOSEK
 
 /*==================[definiciones y macros]==================================*/
-typedef enum { DOWN,RISING,UP,FALLING} STATES;
 
 /*==================[definiciones de datos internos]=========================*/
-uint32_t tickCount = 0;
 
 /*==================[definiciones de datos externos]=========================*/
 
 /*==================[declaraciones de funciones internas]====================*/
-void ReadTec1Init() {
-   gpioConfig(TEC1, GPIO_INPUT); 
-}
 
-void BlinkLed1Init() {
-   gpioConfig(LED1, GPIO_OUTPUT); 
+void AsteriskInit() {
+   uartConfig( UART_USB, 115200 );
+   uartWriteString( UART_USB, "ready osek ej10\n");
 }
 
 /*==================[declaraciones de funciones externas]====================*/
@@ -36,7 +32,7 @@ int main( void )
    // ---------- CONFIGURACIONES ------------------------------
    // Inicializar y configurar la plataforma
   
-	StartOS(AppMode1);
+   StartOS(AppMode1);
    // NO DEBE LLEGAR NUNCA AQUI, debido a que a este programa se ejecuta 
    // directamenteno sobre un microcontroladore y no es llamado por ningun
    // Sistema Operativo, como en el caso de un programa para PC.
@@ -45,60 +41,18 @@ int main( void )
 
 void StartupHook(void) {
    boardConfig();   
-   ReadTec1Init();
-   BlinkLed1Init();
+   AsteriskInit();
 } 
 
 void ErrorHook(void)
 {
-	ShutdownOS(0);
+   ShutdownOS(0);
 }
 
-TASK(BlinkLed1) {
-   gpioToggle(LED1);
+TASK(Asterisk) {
+   uartWriteByte( UART_USB, 42 );
    TerminateTask();
 
-}
-
-TASK(ReadTec1)
-{
-   static STATES state = UP;
-
-   int pressed = ! gpioRead(TEC1);
-   switch ( state ) {
-      case DOWN: {
-         if (pressed) {
-         } else {
-            state = RISING;
-         }
-         break;
-      }
-      case RISING: {
-         if (pressed) {
-            state = DOWN;
-         } else {
-            state = UP;
-         }
-         break;
-      }
-      case UP: {
-         if (pressed) {
-            state = FALLING;
-            
-         } else {
-         }
-         break;
-      }
-      case FALLING: {
-         if (pressed ) {
-            state = DOWN;
-         } else {
-            state = UP;
-         }
-         break;
-      }
-   }      
-   TerminateTask();
 }
 
 

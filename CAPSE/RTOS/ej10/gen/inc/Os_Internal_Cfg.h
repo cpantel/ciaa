@@ -82,7 +82,7 @@
 #define ERROR_CHECKING_EXTENDED   2
 
 /** \brief Count of task */
-#define TASKS_COUNT 2U
+#define TASKS_COUNT 1U
 
 /** \brief Remote tasks count */
 #define REMOTE_TASKS_COUNT 0U
@@ -118,11 +118,11 @@
       ErrorHookRunning = (uint8)0U;   \
    }
 
-#define ALARM_AUTOSTART_COUNT 2
+#define ALARM_AUTOSTART_COUNT 1
 
 #define OSEK_COUNTER_HardwareCounter 0
 /** \brief ALARMS_COUNT define */
-#define ALARMS_COUNT 2
+#define ALARMS_COUNT 1
 
 /** \brief NON_PREEMPTIVE macro definition */
 #define NON_PREEMPTIVE OSEK_ENABLE
@@ -358,10 +358,10 @@ extern ReadyVarType ReadyVar[1];
 extern const TaskPriorityType ResourcesPriority[0];
 
 /** \brief Alarms Variable Structure */
-extern AlarmVarType AlarmsVar[2];
+extern AlarmVarType AlarmsVar[1];
 
 /** \brief Alarms Constant Structure */
-extern const AlarmConstType AlarmsConst[2];
+extern const AlarmConstType AlarmsConst[1];
 
 /** \brief Alarms Constant Structure */
 extern const AutoStartAlarmType AutoStartAlarm[ALARM_AUTOSTART_COUNT];

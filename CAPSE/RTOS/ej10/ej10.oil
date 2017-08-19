@@ -13,49 +13,28 @@ OSEK OSEK {
 
    APPMODE = AppMode1;
 
-   TASK BlinkLed1 {
-      PRIORITY = 2;
+   TASK Asterisk {
+      PRIORITY = 1;
       ACTIVATION = 1;
       STACK = 512;
       TYPE = BASIC;
       SCHEDULE = NON;
    }
 
-   TASK ReadTec1 {
-      PRIORITY = 2;
-      ACTIVATION = 1;
-      STACK = 512;
-      TYPE = BASIC;
-      SCHEDULE = NON;
-   }
-  
-
-   ALARM ActivateBlinkLed1 {
+   ALARM ActivateAsterisk {
       COUNTER = HardwareCounter;
       ACTION = ACTIVATETASK {
-         TASK = BlinkLed1;
+         TASK = Asterisk;
       }
       AUTOSTART = TRUE {
       	APPMODE = AppMode1;
       	ALARMTIME = 0;
-      	CYCLETIME = 500;
-      }
-   }
-
-   ALARM ActivateReadTec1 {
-      COUNTER = HardwareCounter;
-      ACTION = ACTIVATETASK {
-         TASK = ReadTec1;
-      }
-      AUTOSTART = TRUE {
-      	APPMODE = AppMode1;
-      	ALARMTIME = 0;
-      	CYCLETIME = 50;
+      	CYCLETIME = 5000;
       }
    }
 
    COUNTER HardwareCounter {
-      MAXALLOWEDVALUE = 1000;
+      MAXALLOWEDVALUE = 10000;
       TICKSPERBASE = 1;
       MINCYCLE = 1;
       TYPE = HARDWARE;

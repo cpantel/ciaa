@@ -80,19 +80,15 @@
 #define OSEK_OS_INTERRUPT_MASK ((InterruptFlagsType)0xFFFFFFFFU)
 
 /** \brief Task Definition */
-#define BlinkLed1 0
-/** \brief Task Definition */
-#define ReadTec1 1
+#define Asterisk 0
 
 /** \brief Definition of the Application Mode AppMode1 */
 #define AppMode1 0
 
 
 
-/** \brief Definition of the Alarm ActivateBlinkLed1 */
-#define ActivateBlinkLed1 0
-/** \brief Definition of the Alarm ActivateReadTec1 */
-#define ActivateReadTec1 1
+/** \brief Definition of the Alarm ActivateAsterisk */
+#define ActivateAsterisk 0
 
 /** \brief Definition of the Counter HardwareCounter */
 #define HardwareCounter 0
@@ -184,10 +180,8 @@ extern void StartupHook(void);
 /** \brief Error Hook */
 extern void ErrorHook(void);
 
-/** \brief Task Declaration of Task BlinkLed1 */
-DeclareTask(BlinkLed1);
-/** \brief Task Declaration of Task ReadTec1 */
-DeclareTask(ReadTec1);
+/** \brief Task Declaration of Task Asterisk */
+DeclareTask(Asterisk);
 
 
 
