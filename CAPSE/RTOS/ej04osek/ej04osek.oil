@@ -74,6 +74,8 @@ OSEK OSEK {
       ACTION = ACTIVATETASK {
          TASK TickCounter;
       }
+      APPMODE = AppMode1;
+
    }
 
    ALARM ActivateShowElapsedTime {
@@ -81,6 +83,8 @@ OSEK OSEK {
       ACTION = ACTIVATETASK {
          TASK = ShowElapsedTime;
       }
+      APPMODE = AppMode1;
+
    }
 
    COUNTER HardwareCounter {
