@@ -82,7 +82,7 @@
 /** \brief Task Definition */
 #define BlinkLed1 0
 /** \brief Task Definition */
-#define BlinkLed3 1
+#define BlinkLedR 1
 /** \brief Task Definition */
 #define ReadUart 2
 
@@ -90,13 +90,13 @@
 #define AppMode1 0
 
 
-/** \brief Definition of the resource BufferLock */
-#define BufferLock ((ResourceType)0)
+/** \brief Definition of the resource CountLock */
+#define CountLock ((ResourceType)0)
 
 /** \brief Definition of the Alarm ActivateBlinkLed1 */
 #define ActivateBlinkLed1 0
-/** \brief Definition of the Alarm ActivateBlinkLed3 */
-#define ActivateBlinkLed3 1
+/** \brief Definition of the Alarm ActivateBlinkLedR */
+#define ActivateBlinkLedR 1
 /** \brief Definition of the Alarm ActivateReadUart */
 #define ActivateReadUart 2
 
@@ -192,8 +192,8 @@ extern void ErrorHook(void);
 
 /** \brief Task Declaration of Task BlinkLed1 */
 DeclareTask(BlinkLed1);
-/** \brief Task Declaration of Task BlinkLed3 */
-DeclareTask(BlinkLed3);
+/** \brief Task Declaration of Task BlinkLedR */
+DeclareTask(BlinkLedR);
 /** \brief Task Declaration of Task ReadUart */
 DeclareTask(ReadUart);
 

@@ -83,11 +83,11 @@ uint8 StackTaskBlinkLed1[512 + TASK_STACK_ADDITIONAL_SIZE];
 #else
 uint8 StackTaskBlinkLed1[512];
 #endif
-/** \brief BlinkLed3 stack */
+/** \brief BlinkLedR stack */
 #if ( x86 == ARCH )
-uint8 StackTaskBlinkLed3[512 + TASK_STACK_ADDITIONAL_SIZE];
+uint8 StackTaskBlinkLedR[512 + TASK_STACK_ADDITIONAL_SIZE];
 #else
-uint8 StackTaskBlinkLed3[512];
+uint8 StackTaskBlinkLedR[512];
 #endif
 /** \brief ReadUart stack */
 #if ( x86 == ARCH )
@@ -98,8 +98,8 @@ uint8 StackTaskReadUart[512];
 
 /** \brief BlinkLed1 context */
 TaskContextType ContextTaskBlinkLed1;
-/** \brief BlinkLed3 context */
-TaskContextType ContextTaskBlinkLed3;
+/** \brief BlinkLedR context */
+TaskContextType ContextTaskBlinkLedR;
 /** \brief ReadUart context */
 TaskContextType ContextTaskReadUart;
 
@@ -111,7 +111,7 @@ TaskType ReadyList0[2];
 
 const AlarmType OSEK_ALARMLIST_HardwareCounter[3] = {
    ActivateBlinkLed1, /* this alarm has to be incremented with this counter */
-   ActivateBlinkLed3, /* this alarm has to be incremented with this counter */
+   ActivateBlinkLedR, /* this alarm has to be incremented with this counter */
    ActivateReadUart, /* this alarm has to be incremented with this counter */
 };
 
@@ -142,15 +142,15 @@ const TaskConstType TasksConst[TASKS_COUNT] = {
          0
       }, /* task const flags */
       0 , /* events mask */
-      0 | ( 1 << BufferLock ) ,/* resources mask */
+      0 | ( 1 << CountLock ) ,/* resources mask */
       0 /* core */
    },
-   /* Task BlinkLed3 */
+   /* Task BlinkLedR */
    {
-       OSEK_TASK_BlinkLed3,   /* task entry point */
-       &ContextTaskBlinkLed3, /* pointer to task context */
-       StackTaskBlinkLed3, /* pointer stack memory */
-       sizeof(StackTaskBlinkLed3), /* stack size */
+       OSEK_TASK_BlinkLedR,   /* task entry point */
+       &ContextTaskBlinkLedR, /* pointer to task context */
+       StackTaskBlinkLedR, /* pointer stack memory */
+       sizeof(StackTaskBlinkLedR), /* stack size */
        0, /* task priority */
        1, /* task max activations */
        {
@@ -176,7 +176,7 @@ const TaskConstType TasksConst[TASKS_COUNT] = {
          0
       }, /* task const flags */
       0 , /* events mask */
-      0 | ( 1 << BufferLock ) ,/* resources mask */
+      0 | ( 1 << CountLock ) ,/* resources mask */
       0 /* core */
    }
 };
@@ -235,7 +235,7 @@ const AlarmConstType AlarmsConst[3]  = {
       ACTIVATETASK, /* Alarm action */
       {
          NULL, /* no callback */
-         BlinkLed3, /* TaskID */
+         BlinkLedR, /* TaskID */
          0, /* no event */
          0 /* no counter */
       },
@@ -255,7 +255,7 @@ const AlarmConstType AlarmsConst[3]  = {
 const AutoStartAlarmType AutoStartAlarm[ALARM_AUTOSTART_COUNT] = {
   {
       AppMode1, /* Application Mode */
-      ActivateBlinkLed3, /* Alarms */
+      ActivateBlinkLedR, /* Alarms */
       500, /* Alarm Time */
       1000 /* Alarm Time */
    },
@@ -263,7 +263,7 @@ const AutoStartAlarmType AutoStartAlarm[ALARM_AUTOSTART_COUNT] = {
       AppMode1, /* Application Mode */
       ActivateReadUart, /* Alarms */
       500, /* Alarm Time */
-      1000 /* Alarm Time */
+      100 /* Alarm Time */
    }
 };
 

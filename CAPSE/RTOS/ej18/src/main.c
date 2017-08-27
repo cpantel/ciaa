@@ -23,55 +23,59 @@
 
 uint8_t bufferMemory[ BUFFER_SIZE ];
 circularBuffer_t buffer;
+uint8_t currentCounter;
 
-
-void Led1Init() {
+void LedInit() {
+   gpioConfig(LEDR, GPIO_OUTPUT);
    gpioConfig(LED1, GPIO_OUTPUT);
 }
 
-void Led3Init() {
-  gpioConfig(LED3, GPIO_OUTPUT);
-}
-
 void BufferInit() {
-   circularBuffer_Config(&buffer, bufferMemory, BUFFER_SIZE, 4);
+   circularBuffer_Config(&buffer, bufferMemory, BUFFER_SIZE, 4); // 4 is the size of a pointer to a byte
 }
 
 void UartMonitorInit() {
    uartConfig( UART_USB, 115200 );
-   uartWriteString( UART_USB, "ready osek ej18 build 03\n");
+   uartWriteString( UART_USB, "ready osek ej18 build 13\n");
 }
 
 TASK (BlinkLed1) {
-   uint8_t count = 0;
-   GetResource(BufferLock);
+   GetResource(CountLock);
    
-   circularBufferRead(&buffer,&count);
-   
-   ReleaseResource(BufferLock);
-   count += 42;
+   if (currentCounter == 0 ) {
+      CancelAlarm(ActivateBlinkLed1);
+   } else {
+      gpioToggle(LED1);
+      --currentCounter;
+   }
+   ReleaseResource(CountLock);
  
-   gpioToggle(LED1);
-//   ActivateTask(BlinkLed2);
    TerminateTask();
 }
 
-TASK (BlinkLed3) {
-   gpioToggle(LED3);
+TASK (BlinkLedR) {
+   gpioToggle(LEDR);
    TerminateTask();
 }
 
 TASK (ReadUart) {
    uint8_t count; 
-   uartWriteString(UART_USB, "Reading...\n");
-   if ( uartReadByte(UART_USB, count) ) {
-      uartWriteString(UART_USB, "   something read\n");
-      GetResource(BufferLock);
-//      circularBufferWrite(&buffer,&count);
-      ReleaseResource(BufferLock);
-      uartWriteByte(UART_USB,count);
-      uartWriteByte(UART_USB,10);
+   if ( uartReadByte(UART_USB, &count) ) {
+      if (count >= '0' && count <= '9') {
+         count = (count - '0' ) * 2;
+         circularBufferWrite(&buffer,&count);
+      }
    }
+   
+   GetResource(CountLock);
+   if (currentCounter == 0) {
+      
+      circularBufferRead(&buffer,&currentCounter);
+      if (currentCounter != 0) {
+         SetRelAlarm(ActivateBlinkLed1,1000,250);
+      }
+   }
+   ReleaseResource(CountLock);
    TerminateTask();
 } 
 
@@ -90,8 +94,7 @@ void StartupHook(void) {
    boardConfig();   
    UartMonitorInit();
    BufferInit();
-   Led1Init();
-   Led3Init();
+   LedInit();
 } 
 
 void ErrorHook(void)

@@ -13,7 +13,7 @@ OSEK OSEK {
 
    APPMODE = AppMode1;
 
-   RESOURCE BufferLock;
+   RESOURCE CountLock;
 
    TASK BlinkLed1 {
       PRIORITY = 1;
@@ -21,10 +21,10 @@ OSEK OSEK {
       STACK = 512;
       TYPE = BASIC;
       SCHEDULE = NON;
-      RESOURCE = BufferLock;
+      RESOURCE = CountLock;
    }
 
-   TASK BlinkLed3 {
+   TASK BlinkLedR {
       PRIORITY = 1;
       ACTIVATION = 1;
       STACK = 512;
@@ -38,7 +38,7 @@ OSEK OSEK {
       STACK = 512;
       TYPE = BASIC;
       SCHEDULE = NON;
-      RESOURCE = BufferLock;
+      RESOURCE = CountLock;
    }
 
    ALARM ActivateBlinkLed1 {
@@ -49,10 +49,10 @@ OSEK OSEK {
       APPMODE = AppMode1;
    }
 
-   ALARM ActivateBlinkLed3 {
+   ALARM ActivateBlinkLedR {
       COUNTER = HardwareCounter;
       ACTION = ACTIVATETASK {
-         TASK = BlinkLed3;
+         TASK = BlinkLedR;
       }
       AUTOSTART = TRUE {
          APPMODE = AppMode1;
@@ -70,7 +70,7 @@ OSEK OSEK {
       AUTOSTART = TRUE {
          APPMODE = AppMode1;
          ALARMTIME = 500;
-         CYCLETIME = 1000;
+         CYCLETIME = 100;
       }
    }
 
