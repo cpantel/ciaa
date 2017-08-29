@@ -23,8 +23,8 @@ OSEK OSEK {
 
    ISR ISRtec {
       CATEGORY = 2;
-      INTERRUPT =  GPIO0;
-      PRIORITY = 1; 
+      INTERRUPT = GPIO0;
+      PRIORITY = 0; 
    }
 
    ALARM ActivateBlinkLed1 {

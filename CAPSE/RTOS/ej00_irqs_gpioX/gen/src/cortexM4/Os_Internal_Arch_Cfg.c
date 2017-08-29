@@ -211,9 +211,9 @@ void (* const g_pfnVectors[])(void) = {
 /** \brief Interrupt enabling and priority setting function */
 void Enable_User_ISRs(void)
 {
-   /* Enabling IRQ GPIO0 with priority 1 */
+   /* Enabling IRQ GPIO0 with priority 0 */
    NVIC_EnableIRQ(32);
-   NVIC_SetPriority(32, 1);
+   NVIC_SetPriority(32, 0);
 
 }
 

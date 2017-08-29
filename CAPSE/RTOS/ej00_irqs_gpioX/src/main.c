@@ -17,6 +17,11 @@
 /*==================[definiciones de datos externos]=========================*/
 
 /*==================[declaraciones de funciones internas]====================*/
+void UartMonitorInit() {
+   uartConfig( UART_USB, 115200 );
+   uartWriteString( UART_USB, "ready osek ej00 build 13\n");
+}
+
 
 void Led1Init() {
    gpioConfig(LED1, GPIO_OUTPUT);
@@ -28,17 +33,30 @@ void Led2Init() {
 
 void Tec1Init() {
    // taken from freertos example
+   gpioConfig(TEC1, GPIO_INPUT);
    Chip_SCU_GPIOIntPinSel(0,0,4);
+   Chip_PININT_ClearIntStatus(LPC_GPIO_PIN_INT, PININTCH0 );
    Chip_PININT_SetPinModeEdge(LPC_GPIO_PIN_INT, PININTCH0);
    Chip_PININT_EnableIntLow( LPC_GPIO_PIN_INT, PININTCH0);
+//   Chip_PININT_EnableIntHigh( LPC_GPIO_PIN_INT, PININTCH0);
 
+/*
+   Chip_SCU_GPIOIntPinSel(1,0,4);
+   Chip_PININT_ClearIntStatus(LPC_GPIO_PIN_INT, PININTCH1 );
+   Chip_PININT_SetPinModeEdge(LPC_GPIO_PIN_INT, PININTCH1);
+//   Chip_PININT_EnableIntLow( LPC_GPIO_PIN_INT, PININTCH0);
+   Chip_PININT_EnableIntHigh( LPC_GPIO_PIN_INT, PININTCH1);
+*/
 
-//   gpioConfig(TEC1, GPIO_INPUT);
+//   NVIC_EnableIRQ( PIN_INT0_IRQn);  generated
+     NVIC_ClearPendingIRQ(PIN_INT0_IRQn);
   
 }
 
 ISR (ISRtec) {
-   gpioWrite(LED2,1);
+   gpioToggle(LED2);
+   uartWriteString( UART_USB, "ISR tec\n");
+   Chip_PININT_ClearIntStatus(LPC_GPIO_PIN_INT, PININTCH0 );
 }
 
 TASK (BlinkLed1) {
@@ -61,6 +79,7 @@ void StartupHook(void) {
    boardConfig();   
    Led1Init();
    Led2Init();
+   UartMonitorInit();
 } 
 
 void ErrorHook(void)
