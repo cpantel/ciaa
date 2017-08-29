@@ -79,6 +79,7 @@ void StartupHook(void) {
    boardConfig();   
    Led1Init();
    Led2Init();
+   Tec1Init();
    UartMonitorInit();
 } 
 
