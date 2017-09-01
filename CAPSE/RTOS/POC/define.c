@@ -2,25 +2,35 @@
 #include <stdio.h>
 #endif //STDOUT
 
-typedef enum alarm { Alarm1, Alarm2 } Alarms;
-typedef enum event { Event1 = 0x01u,  Event2 = 0x02u, Event3 = 0x04u } Events;
-typedef enum task  { Task1, Task2, Task3 } Tasks;
+#define Alarm1 0
+#define Alarm2 1
 
+#define Event1 0x01u
+#define Event2 0x02u
+#define Event3 0x04u
 
-void WaitEvent( Events event) {
+#define Task1 0
+#define Task2 1
+#define Task3 2
+
+typedef unsigned int EventMaskType;
+typedef unsigned char TaskType;
+typedef unsigned char AlarmType;
+
+void WaitEvent(EventMaskType event) {
 #ifdef STDOUT
    printf("Event: %d\n", event);
 #endif //STDOUT
 }
 
-void ActivateTask( Tasks task) {
+void ActivateTask( TaskType task) {
 #ifdef STDOUT
    printf("Task: %d\n", task);
 #endif //STDOUT
 
 }
 
-void SetRelAlarm (Alarms alarm) {
+void SetRelAlarm (AlarmType alarm) {
 #ifdef STDOUT
    printf("Alarm: %d\n", alarm);
 #endif //STDOUT
@@ -44,6 +54,7 @@ int main(int argc, char* argv[]) {
    WaitEvent(Alarm1);
    ActivateTask(Event3);
    SetRelAlarm(Task3);
+
 #endif // WRONG
    return 0;
 }
