@@ -1,0 +1,153 @@
+OSEK OSEK {
+
+   OS	ExampleOS {
+      STATUS = EXTENDED;
+      ERRORHOOK = TRUE;
+      PRETASKHOOK = FALSE;
+      POSTTASKHOOK = FALSE;
+      STARTUPHOOK = TRUE;
+      SHUTDOWNHOOK = FALSE;
+      USERESSCHEDULER = FALSE;
+      MEMMAP = FALSE;
+   };
+
+   APPMODE = AppMode1;
+
+   EVENT = TurnOffLed1Evt;
+   EVENT = TurnOffLed2Evt;
+   EVENT = TurnOffLed3Evt;
+
+   TASK BlinkLedR {
+      PRIORITY = 1;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = BASIC;
+      SCHEDULE = NON;
+   }
+
+
+   TASK BlinkLed1 {
+      PRIORITY = 1;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = EXTENDED;
+      SCHEDULE = NON;
+      EVENT = TurnOffLed1Evt;
+   }
+
+   TASK BlinkLed2{
+      PRIORITY = 1;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = EXTENDED;
+      SCHEDULE = NON;
+      EVENT = TurnOffLed2Evt;
+   }
+
+   TASK BlinkLed3 {
+      PRIORITY = 1;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = EXTENDED;
+      SCHEDULE = NON;
+      EVENT = TurnOffLed3Evt; 
+   }
+
+   ALARM ActivateBlinkLed1 {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = BlinkLed1;
+      }
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+         ALARMTIME = 1000;
+         CYCLETIME = 4000;
+      }
+   }
+
+
+   ALARM ActivateBlinkLed2 {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = BlinkLed2;
+      }
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+         ALARMTIME = 1000;
+         CYCLETIME = 4000;
+      }
+   }
+
+
+   ALARM ActivateBlinkLed3 {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = BlinkLed3;
+      }
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+         ALARMTIME = 1000;
+         CYCLETIME = 4000;
+      }
+   }
+
+   ALARM TurnOffLed1 {
+      COUNTER = HardwareCounter;
+      ACTION = SETEVENT {
+         TASK = BlinkLed1;
+         EVENT = TurnOffLed1Evt;
+      }
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+         ALARMTIME = 2000;
+         CYCLETIME = 4000;
+      }
+   }
+
+   ALARM TurnOffLed2 {
+      COUNTER = HardwareCounter;
+      ACTION = SETEVENT {
+         TASK = BlinkLed2;
+         EVENT = TurnOffLed2Evt;
+      }
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+         ALARMTIME = 3000;
+         CYCLETIME = 4000;
+      }
+   }
+
+  ALARM TurnOffLed3 {
+      COUNTER = HardwareCounter;
+      ACTION = SETEVENT {
+         TASK = BlinkLed3;
+         EVENT = TurnOffLed3Evt;
+      }
+      AUTOSTART = TRUE  {
+         APPMODE = AppMode1;
+         ALARMTIME = 4000;
+         CYCLETIME = 4000;
+      }
+   }
+
+   ALARM ActivateBlinkLedR {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = BlinkLedR;
+      }
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+         ALARMTIME = 1000;
+         CYCLETIME = 1000;
+      }
+   }
+
+   COUNTER HardwareCounter {
+      MAXALLOWEDVALUE = 8000;
+      TICKSPERBASE = 1;
+      MINCYCLE = 1;
+      TYPE = HARDWARE;
+      COUNTER = HWCOUNTER0;
+   };
+
+};
