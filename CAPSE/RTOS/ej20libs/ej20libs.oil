@@ -1,0 +1,78 @@
+OSEK OSEK {
+
+   OS	ExampleOS {
+      STATUS = EXTENDED;
+      ERRORHOOK = TRUE;
+      PRETASKHOOK = FALSE;
+      POSTTASKHOOK = FALSE;
+      STARTUPHOOK = TRUE;
+      SHUTDOWNHOOK = FALSE;
+      USERESSCHEDULER = FALSE;
+      MEMMAP = FALSE;
+   };
+
+   APPMODE = AppMode1;
+
+   EVENT = EvtTec1;
+   EVENT = EvtTec2;
+
+   TASK ReadTec {
+      PRIORITY = 1;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = BASIC;
+      SCHEDULE = NON;
+   }
+
+   TASK Alive {
+      PRIORITY = 1;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = BASIC;
+      SCHEDULE = NON;
+   }
+
+   TASK DeltaTime { 
+      PRIORITY = 2;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = EXTENDED;
+      EVENT = EvtTec1;
+      EVENT = EvtTec2;
+      SCHEDULE = NON;
+      AUTOSTART = TRUE;
+      APPMODE = AppMode1;
+   }
+
+   ALARM ActivateReadTec {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = ReadTec;
+      }
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+         ALARMTIME = 50;
+         CYCLETIME = 40;
+      }
+   }
+
+   ALARM ActivateAlive {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = Alive;
+      }
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+         ALARMTIME = 1000;
+         CYCLETIME = 1000;
+      }
+   }
+   COUNTER HardwareCounter {
+      MAXALLOWEDVALUE = 1000;
+      TICKSPERBASE = 1;
+      MINCYCLE = 1;
+      TYPE = HARDWARE;
+      COUNTER = HWCOUNTER0;
+   };
+
+};
