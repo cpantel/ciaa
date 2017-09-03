@@ -22,7 +22,7 @@
 
 /*==================[funcion principal]======================================*/
 
-void printError(void);
+void printError(void) 
 {
    static uint8_t OSErrorGetServiceIdTxt[][25]={
       "Undefined",

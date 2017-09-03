@@ -31,8 +31,8 @@
 
 libs_PATH := projects/ciaa/CAPSE/RTOS/libs
 
-libs_SRC_FILES := $(wildcard $(osek_PATH)/src/*.c) \
-                  $(wildcard $(osek_PATH)/src/*.S) 
+libs_SRC_FILES := $(wildcard $(libs_PATH)/src/*.c) \
+                  $(wildcard $(libs_PATH)/src/*.S) 
 
 libs_INC_FOLDERS := $(libs_PATH)/inc
 
