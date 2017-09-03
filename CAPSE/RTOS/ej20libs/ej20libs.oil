@@ -16,12 +16,15 @@ OSEK OSEK {
    EVENT = EvtTec1;
    EVENT = EvtTec2;
 
+   RESOURCE = CountLock;
+
    TASK ReadTec {
       PRIORITY = 1;
       ACTIVATION = 1;
       STACK = 512;
       TYPE = BASIC;
       SCHEDULE = NON;
+      RESOURCE = CountLock;
    }
 
    TASK Alive {
@@ -42,6 +45,7 @@ OSEK OSEK {
       SCHEDULE = NON;
       AUTOSTART = TRUE;
       APPMODE = AppMode1;
+      RESOURCE = CountLock;
    }
 
    ALARM ActivateReadTec {

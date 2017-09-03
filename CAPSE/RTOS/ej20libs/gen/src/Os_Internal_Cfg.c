@@ -141,7 +141,7 @@ const TaskConstType TasksConst[TASKS_COUNT] = {
          0
       }, /* task const flags */
       0 , /* events mask */
-      0 ,/* resources mask */
+      0 | ( 1 << CountLock ) ,/* resources mask */
       0 /* core */
    },
    /* Task Alive */
@@ -175,7 +175,7 @@ const TaskConstType TasksConst[TASKS_COUNT] = {
          0
       }, /* task const flags */
       0 | EvtTec1 | EvtTec2 , /* events mask */
-      0 ,/* resources mask */
+      0 | ( 1 << CountLock ) ,/* resources mask */
       0 /* core */
    }
 };
@@ -215,8 +215,8 @@ const ReadyConstType ReadyConst[2] = {
 ReadyVarType ReadyVar[2];
 
 /** \brief Resources Priorities */
-const TaskPriorityType ResourcesPriority[0]  = {
-
+const TaskPriorityType ResourcesPriority[1]  = {
+   1
 };
 /** TODO replace next line with: 
  ** AlarmVarType AlarmsVar[2]; */

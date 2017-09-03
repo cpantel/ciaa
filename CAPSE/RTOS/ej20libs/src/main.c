@@ -5,7 +5,6 @@
  *===========================================================================*/
 
 /*==================[inlcusiones]============================================*/
-#include "stdio.h"
 #include "sapi.h"     // <= Biblioteca sAPI
 #include "os.h"       // <= freeOSEK
 #include "common.h"
@@ -44,7 +43,7 @@ void TecInit() {
 
 void UartMonitorInit() {
    uartConfig( UART_USB, 115200 );
-   uartWriteString( UART_USB, "ready osek ej20libs build 6\n");
+   uartWriteString( UART_USB, "ready osek ej20libs build 7\n");
 }
 
 TASK (Alive) {
@@ -56,6 +55,7 @@ TASK (DeltaTime) {
    DELTA_STATES state = WAITING_1;
 
    uint32_t counter;
+   uint32_t debouncerCounterCopy;
 
    EventMaskType events;
 
@@ -76,10 +76,17 @@ TASK (DeltaTime) {
          t2 = true;
       }
 
+      if (t1 || t2) {
+         GetResource(CountLock);
+         debouncerCounterCopy = debouncerCounter;
+         ReleaseResource(CountLock);
+      }
+
+
       switch (state) {
          case WAITING_1:
             if (t1) {
-               counter = debouncerCounter;
+               counter = debouncerCounterCopy;
                state=WAITING_2;
             } else {
 
@@ -90,7 +97,7 @@ TASK (DeltaTime) {
             if (t2) {
                // will fail in day 25 * 40 because of the sign
                // will fail in day 50 * 50 because of the overflow
-               int elapsed = (debouncerCounter - counter ) * 40 ; // TODO: replace with proper call
+               int elapsed = (debouncerCounterCopy - counter ) * 40 ; // TODO: replace with proper call
                char buffer[32];
                itoa(elapsed, buffer, 10);
                uartWriteString( UART_USB, "Elapsed time: ");
@@ -98,7 +105,7 @@ TASK (DeltaTime) {
                uartWriteString( UART_USB, " ms\n");
                state = WAITING_1;
             } else {
-               counter = debouncerCounter;
+               counter = debouncerCounterCopy;
             }
          break;
          default: 
@@ -117,8 +124,9 @@ TASK (ReadTec) {
       {UP,TEC2,EvtTec2,DeltaTime}
    };
  
-   // TODO: protect
+   GetResource(CountLock);
    ++debouncerCounter;
+   ReleaseResource(CountLock);
 
    uint8_t idx;
    for (idx = 0; idx < 2; ++idx) {

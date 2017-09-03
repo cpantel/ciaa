@@ -94,6 +94,8 @@
 /** \brief Definition of the Event EvtTec2 */
 #define EvtTec2 0x2U
 
+/** \brief Definition of the resource CountLock */
+#define CountLock ((ResourceType)0)
 
 /** \brief Definition of the Alarm ActivateReadTec */
 #define ActivateReadTec 0
