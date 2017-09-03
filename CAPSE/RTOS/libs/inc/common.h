@@ -16,10 +16,11 @@
 /*==================[declaraciones de funciones internas]====================*/
 
 /*==================[declaraciones de funciones externas]====================*/
+void printError(void);
+
+char* itoa(int value, char* result, int base);
 
 /*==================[funcion principal]======================================*/
-
-void printError(void);
 
 /*==================[definiciones de funciones internas]=====================*/
 
