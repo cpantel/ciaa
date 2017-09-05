@@ -20,6 +20,7 @@ void printError(void);
 
 char* itoa(int value, char* result, int base);
 
+void ftoa(float n, char *res, int afterpoint);
 /*==================[funcion principal]======================================*/
 
 /*==================[definiciones de funciones internas]=====================*/
