@@ -13,8 +13,7 @@
 
 typedef enum { DOWN,RISING,UP,FALLING} STATES;  // FSM debouncer
 
-uint32_t elapsedTime      = 0;
-uint32_t elapsedTimeAccum = 0;
+uint32_t time = 0;
 uint32_t hits             = 0;
 
 typedef enum { WAITING_DOWN, WAITING_UP} DELTA_STATES;
@@ -46,7 +45,7 @@ void TecInit() {
 
 void UartMonitorInit() {
    uartConfig( UART_USB, 115200 );
-   uartWriteString( UART_USB, "ready osek ej21libs build 17\n");
+   uartWriteString( UART_USB, "ready osek ej21libs build 20\n");
 }
 
 TASK (Alive) {
@@ -68,7 +67,6 @@ TASK (DeltaTime) {
       bool_t down      = false;
       bool_t updateAvg = false;
       bool_t start     = false;
-      bool_t stop      = false;
 
       if ( events & EvtTecUP) {
          ClearEvent(EvtTecUP);
@@ -94,7 +92,6 @@ TASK (DeltaTime) {
          case WAITING_UP:
             if (up) {
                state = WAITING_DOWN;
-               stop = true;
             } else {
 
             }
@@ -105,14 +102,9 @@ TASK (DeltaTime) {
 
       }
      
-      if (start || stop ) {
+      if ( down ) {
          GetResource(CountLock);
-         if (stop) {
-         // will fail in day 25 / 40 because of the sign
-         // will fail in day 50 / 50 because of the overflow
-            elapsedTimeAccum += elapsedTime * 40 ; // TODO: replace with proper call
-         }
-         elapsedTime = 0;
+         ++hits;
          ReleaseResource(CountLock);
 
       }
@@ -123,27 +115,28 @@ TASK (ShowAvg) {
    char buffer[32];
    float localAvg;
    uint32_t   localHits;
-   uint32_t   localElapsedTimeAccum;
+   uint32_t   localTime;
 
    GetResource(CountLock);
    localHits = hits;
-   localElapsedTimeAccum = elapsedTimeAccum;
+   localTime = time * 40 ;
    ReleaseResource(CountLock);
 
    itoa(localHits,buffer,10);
    uartWriteString( UART_USB, "Hits: ");
    uartWriteString( UART_USB, buffer);
 
-   itoa(localElapsedTimeAccum, buffer,10);
+   itoa(localTime, buffer,10);
    uartWriteString( UART_USB, " elapsed: ");
    uartWriteString( UART_USB, buffer);
  
 
-   float avg = ( localElapsedTimeAccum / hits);
-   ftoa(avg, buffer, 4);
+   float avg = ( (float)  localHits / (float) localTime);
+   avg *= 1000.0;
+   ftoa(avg, buffer, 10);
    uartWriteString( UART_USB, " Avg: ");
    uartWriteString( UART_USB, buffer);
-   uartWriteString( UART_USB, " pushes by \n");
+   uartWriteString( UART_USB, " pushes by second \n");
    TerminateTask();
 }
 
@@ -153,8 +146,7 @@ TASK (ReadTec) {
    };
  
    GetResource(CountLock);
-   ++elapsedTime;
-   ++hits;
+   ++time;
    ReleaseResource(CountLock);
 
    uint8_t idx;
