@@ -13,8 +13,9 @@
 
 typedef enum { DOWN,RISING,UP,FALLING} STATES;  // FSM debouncer
 
-uint32_t debouncerCounter = 0;
-float    avg = 0;
+uint32_t elapsedTime      = 0;
+uint32_t elapsedTimeAccum = 0;
+uint32_t hits             = 0;
 
 typedef enum { WAITING_DOWN, WAITING_UP} DELTA_STATES;
 
@@ -45,7 +46,7 @@ void TecInit() {
 
 void UartMonitorInit() {
    uartConfig( UART_USB, 115200 );
-   uartWriteString( UART_USB, "ready osek ej21libs build 7\n");
+   uartWriteString( UART_USB, "ready osek ej21libs build 17\n");
 }
 
 TASK (Alive) {
@@ -55,12 +56,6 @@ TASK (Alive) {
 
 TASK (DeltaTime) {
    DELTA_STATES state = WAITING_DOWN;
-
-   uint32_t counter;
-   uint32_t accum;
-   uint32_t hits;
-   float    localAvg;
-   uint32_t debouncerCounterCopy;
 
    EventMaskType events;
 
@@ -72,6 +67,8 @@ TASK (DeltaTime) {
       bool_t up        = false;
       bool_t down      = false;
       bool_t updateAvg = false;
+      bool_t start     = false;
+      bool_t stop      = false;
 
       if ( events & EvtTecUP) {
          ClearEvent(EvtTecUP);
@@ -82,17 +79,12 @@ TASK (DeltaTime) {
          ClearEvent(EvtTecDOWN);
          down = true;
       }
-
-      if (down || up) {
-         GetResource(CountLock);
-         debouncerCounterCopy = debouncerCounter - debouncerCounterCopy;
-         ReleaseResource(CountLock);
-      }
+     
 
       switch (state) {
          case WAITING_DOWN:
             if (down) {
-               counter = debouncerCounterCopy;
+               start = true;
                state=WAITING_UP;
             } else {
 
@@ -101,8 +93,8 @@ TASK (DeltaTime) {
 
          case WAITING_UP:
             if (up) {
-             state = WAITING_DOWN;
-               updateAvg = true;
+               state = WAITING_DOWN;
+               stop = true;
             } else {
 
             }
@@ -113,15 +105,15 @@ TASK (DeltaTime) {
 
       }
      
-      if (updateAvg && false) {
-         // will fail in day 25 * 40 because of the sign
-         // will fail in day 50 * 50 because of the overflow
-         accum += (debouncerCounterCopy - counter ) * 40 ; // TODO: replace with proper call
-         ++hits;
-         localAvg = ( counter / hits);
-         GetResource(AvgLock);
-         avg = localAvg;
-         ReleaseResource(AvgLock);
+      if (start || stop ) {
+         GetResource(CountLock);
+         if (stop) {
+         // will fail in day 25 / 40 because of the sign
+         // will fail in day 50 / 50 because of the overflow
+            elapsedTimeAccum += elapsedTime * 40 ; // TODO: replace with proper call
+         }
+         elapsedTime = 0;
+         ReleaseResource(CountLock);
 
       }
    }
@@ -130,16 +122,28 @@ TASK (DeltaTime) {
 TASK (ShowAvg) {
    char buffer[32];
    float localAvg;
+   uint32_t   localHits;
+   uint32_t   localElapsedTimeAccum;
 
-   GetResource(AvgLock);
-   localAvg = avg;
-   ReleaseResource(AvgLock);
+   GetResource(CountLock);
+   localHits = hits;
+   localElapsedTimeAccum = elapsedTimeAccum;
+   ReleaseResource(CountLock);
 
-
-   ftoa(avg, buffer, 4);
-   uartWriteString( UART_USB, "Avg: ");
+   itoa(localHits,buffer,10);
+   uartWriteString( UART_USB, "Hits: ");
    uartWriteString( UART_USB, buffer);
-   uartWriteString( UART_USB, " ms\n");
+
+   itoa(localElapsedTimeAccum, buffer,10);
+   uartWriteString( UART_USB, " elapsed: ");
+   uartWriteString( UART_USB, buffer);
+ 
+
+   float avg = ( localElapsedTimeAccum / hits);
+   ftoa(avg, buffer, 4);
+   uartWriteString( UART_USB, " Avg: ");
+   uartWriteString( UART_USB, buffer);
+   uartWriteString( UART_USB, " pushes by \n");
    TerminateTask();
 }
 
@@ -149,7 +153,8 @@ TASK (ReadTec) {
    };
  
    GetResource(CountLock);
-   ++debouncerCounter;
+   ++elapsedTime;
+   ++hits;
    ReleaseResource(CountLock);
 
    uint8_t idx;

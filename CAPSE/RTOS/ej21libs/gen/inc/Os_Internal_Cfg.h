@@ -88,7 +88,7 @@
 #define REMOTE_TASKS_COUNT 0U
 
 /** \brief Count of resources */
-#define RESOURCES_COUNT 2
+#define RESOURCES_COUNT 1
 
 /** \brief Error Checking Type */
 #define ERROR_CHECKING_TYPE ERROR_CHECKING_EXTENDED
@@ -348,7 +348,7 @@ extern const TaskType TasksAppModeAppMode1[1];
 extern const AutoStartType AutoStart[1];
 
 /** \brief Resources Priorities */
-extern const TaskPriorityType ResourcesPriority[2];
+extern const TaskPriorityType ResourcesPriority[1];
 
 /** \brief Ready Const List */
 extern const ReadyConstType ReadyConst[2];
@@ -357,7 +357,7 @@ extern const ReadyConstType ReadyConst[2];
 extern ReadyVarType ReadyVar[2];
 
 /** \brief Resources Priorities */
-extern const TaskPriorityType ResourcesPriority[2];
+extern const TaskPriorityType ResourcesPriority[1];
 
 /** \brief Alarms Variable Structure */
 extern AlarmVarType AlarmsVar[3];

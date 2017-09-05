@@ -98,8 +98,6 @@
 
 /** \brief Definition of the resource CountLock */
 #define CountLock ((ResourceType)0)
-/** \brief Definition of the resource AvgLock */
-#define AvgLock ((ResourceType)1)
 
 /** \brief Definition of the Alarm ActivateReadTec */
 #define ActivateReadTec 0
