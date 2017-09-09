@@ -1,0 +1,166 @@
+OSEK OSEK {
+
+   OS	ExamenOS {
+      STATUS = EXTENDED;
+      ERRORHOOK = TRUE;
+      PRETASKHOOK = FALSE;
+      POSTTASKHOOK = FALSE;
+      STARTUPHOOK = TRUE;
+      SHUTDOWNHOOK = FALSE;
+      USERESSCHEDULER = FALSE;
+      MEMMAP = FALSE;
+   };
+
+   APPMODE = AppMode1;
+
+   EVENT = EvtReset;
+   EVENT = EvtShow;
+   EVENT = EvtError;
+
+   EVENT = EvtQok;
+   EVENT = EvtSok;
+   EVENT = EvtRok;
+   EVENT = EvtEok;
+
+   TASK Alive {
+      PRIORITY = 1;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = BASIC;
+      SCHEDULE = NON;
+   }
+
+
+   TASK ReadReset {
+      PRIORITY = 1;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = EXTENDED;
+      SCHEDULE = NON;
+      EVENT = EvtReset;
+ 
+   }
+
+   TASK ReadPacket {
+      PRIORITY = 1;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = EXTENDED;
+      SCHEDULE = NON;
+      EVENT = EvtError;
+      EVENT = EvtQok;
+      EVENT = EvtSok;
+      EVENT = EvtRok;
+      EVENT = EvtEok;
+   }
+
+   TASK Statistics {
+      PRIORITY = 1;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = EXTENDED;
+      SCHEDULE = NON;
+      AUTOSTART = TRUE;
+      EVENT = EvtReset;
+      EVENT = EvtShow;
+      EVENT = EvtError;
+      EVENT = EvtQok;
+      EVENT = EvtSok;
+      EVENT = EvtRok;
+      EVENT = EvtEok;
+      APPMODE = AppMode1;
+   }
+
+   TASK ShowGoodPacket {
+      PRIORITY = 1;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = BASIC;
+      SCHEDULE = NON;
+   }
+
+   TASK ShowBadPacket {
+      PRIORITY = 1;
+      ACTIVATION = 1;
+      STACK = 512;
+      TYPE = BASIC;
+      SCHEDULE = NON;
+   }
+
+   ALARM ActivateAlive {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = Alive;
+      }
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+         ALARMTIME = 1000;
+         CYCLETIME = 1000;
+      }
+   }
+
+   ALARM ActivateShowGoodPacket {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = ShowGoodPacket;
+      }
+      AUTOSTART = FALSE;
+   }
+
+   ALARM ActivateShowBadPacket {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = ShowBadPacket;
+      }
+      AUTOSTART = FALSE;
+   }
+
+
+
+   ALARM ActivateReadReset {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = ReadReset;
+      }
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+         ALARMTIME = 50;
+         CYCLETIME = 40;
+      }
+   }
+
+   ALARM ActivateReadPacket {
+      COUNTER = HardwareCounter;
+      ACTION = ACTIVATETASK {
+         TASK = ReadPacket;
+      }
+      AUTOSTART = TRUE {
+         APPMODE = AppMode1;
+         ALARMTIME = 50;
+         CYCLETIME = 40;
+      }
+   }
+
+
+   ALARM ShowStatistics {
+      COUNTER = HardwareCounter;
+      ACTION = SETEVENT {
+         TASK = Statistics;
+         EVENT = EvtShow;
+      }
+      AUTOSTART = TRUE  {
+         APPMODE = AppMode1;
+         ALARMTIME = 2000;
+         CYCLETIME = 2000;
+      }
+   }
+
+   COUNTER HardwareCounter {
+      MAXALLOWEDVALUE = 8000;
+      TICKSPERBASE = 1;
+      MINCYCLE = 1;
+      TYPE = HARDWARE;
+      COUNTER = HWCOUNTER0;
+   };
+
+};

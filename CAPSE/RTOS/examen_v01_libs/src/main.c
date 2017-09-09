@@ -40,7 +40,7 @@ void ShowInit() {
 
 void UartInit() {
    uartConfig( UART_USB, 19200 );
-   uartWriteString( UART_USB, "ready osek examen_v1 build 12\n");
+   uartWriteString( UART_USB, "ready osek examen_v1 build 11\n");
 }
 
 
